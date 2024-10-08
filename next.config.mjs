@@ -1,8 +1,13 @@
-import { withPayload } from '@payloadcms/next/withPayload'
+import createNextIntlPlugin from "next-intl/plugin"
+import { withPayload } from "@payloadcms/next/withPayload"
+
+// `next-intl` eklentisini oluşturun
+const withNextIntl = createNextIntlPlugin()
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Your Next.js config here
+    // Ortak Next.js yapılandırmalarınızı buraya ekleyebilirsiniz
 }
 
-export default withPayload(nextConfig)
+// Eklentileri zincirleyerek birleştiriyoruz
+export default withPayload(withNextIntl(nextConfig))

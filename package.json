@@ -1,51 +1,66 @@
 {
-  "name": "deneme",
-  "version": "1.0.0",
-  "description": "A blank template to get started with Payload 3.0",
-  "license": "MIT",
-  "type": "module",
-  "scripts": {
-    "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
-    "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
-    "devsafe": "rm -rf .next && cross-env NODE_OPTIONS=--no-deprecation next dev",
-    "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
-    "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
-    "lint": "cross-env NODE_OPTIONS=--no-deprecation next lint",
-    "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
-    "start": "cross-env NODE_OPTIONS=--no-deprecation next start"
-  },
-  "dependencies": {
-    "@payloadcms/db-mongodb": "beta",
-    "@payloadcms/next": "beta",
-    "@payloadcms/plugin-cloud": "beta",
-    "@payloadcms/richtext-lexical": "beta",
-    "cross-env": "^7.0.3",
-    "graphql": "^16.8.1",
-    "next": "15.0.0-canary.173",
-    "payload": "beta",
-    "react": "19.0.0-rc-3edc000d-20240926",
-    "react-dom": "19.0.0-rc-3edc000d-20240926",
-    "sharp": "0.32.6"
-  },
-  "devDependencies": {
-    "@types/node": "^22.5.4",
-    "@types/react": "npm:types-react@19.0.0-rc.1",
-    "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
-    "eslint": "^8",
-    "eslint-config-next": "15.0.0-canary.173",
-    "typescript": "5.6.2"
-  },
-  "engines": {
-    "node": "^18.20.2 || >=20.9.0"
-  },
-  "pnpm": {
+    "name": "deneme",
+    "version": "1.0.0",
+    "description": "A blank template to get started with Payload 3.0",
+    "license": "MIT",
+    "type": "module",
+    "scripts": {
+        "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
+        "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
+        "devsafe": "rm -rf .next && cross-env NODE_OPTIONS=--no-deprecation next dev",
+        "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
+        "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
+        "lint": "cross-env NODE_OPTIONS=--no-deprecation next lint",
+        "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
+        "start": "cross-env NODE_OPTIONS=--no-deprecation next start"
+    },
+    "dependencies": {
+        "@lexical/react": "^0.18.0",
+        "@payloadcms/db-mongodb": "beta",
+        "@payloadcms/next": "beta",
+        "@payloadcms/plugin-cloud": "beta",
+        "@payloadcms/plugin-redirects": "3.0.0-beta.111",
+        "@payloadcms/plugin-seo": "3.0.0-beta.111",
+        "@payloadcms/richtext-lexical": "beta",
+        "@payloadcms/richtext-slate": "3.0.0-beta.111",
+        "axios": "^1.7.7",
+        "cross-env": "^7.0.3",
+        "graphql": "^16.8.1",
+        "lexical": "^0.18.0",
+        "next": "15.0.0-canary.173",
+        "next-intl": "^3.20.0",
+        "payload": "beta",
+        "payload-plugin-lexical": "^0.6.6",
+        "prettier": "^3.3.3",
+        "prettier-plugin-tailwindcss": "^0.6.8",
+        "react": "19.0.0-rc-3edc000d-20240926",
+        "react-color": "^2.19.3",
+        "react-dom": "19.0.0-rc-3edc000d-20240926",
+        "sharp": "0.32.6",
+        "slugify": "^1.6.6"
+    },
+    "devDependencies": {
+        "@types/node": "^22.5.4",
+        "@types/react": "npm:types-react@19.0.0-rc.1",
+        "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
+        "autoprefixer": "^10.4.20",
+        "eslint": "^8",
+        "eslint-config-next": "15.0.0-canary.173",
+        "postcss": "^8.4.47",
+        "tailwindcss": "^3.4.13",
+        "typescript": "5.6.2"
+    },
+    "engines": {
+        "node": "^18.20.2 || >=20.9.0"
+    },
+    "pnpm": {
+        "overrides": {
+            "@types/react": "npm:types-react@19.0.0-rc.1",
+            "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1"
+        }
+    },
     "overrides": {
-      "@types/react": "npm:types-react@19.0.0-rc.1",
-      "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1"
+        "@types/react": "npm:types-react@19.0.0-rc.1",
+        "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1"
     }
-  },
-  "overrides": {
-    "@types/react": "npm:types-react@19.0.0-rc.1",
-    "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1"
-  }
 }
