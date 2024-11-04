@@ -1,10 +1,5 @@
-import type { CollectionConfig } from "payload"
-import { revalidateHook } from "../../hooks/revalidate"
-import { mediaFields } from "../../fields/mediaFields"
+import { CollectionConfig } from "payload"
 import { slugField } from "@/fields/slug"
-import { populatePublishedAt } from "../../hooks/populatePublishedAt"
-import { isHomePage } from "@/fields/isHomePage"
-
 import {
     MetaDescriptionField,
     MetaImageField,
@@ -12,11 +7,15 @@ import {
     OverviewField,
     PreviewField,
 } from "@payloadcms/plugin-seo/fields"
+import { mediaFields } from "@/fields/mediaFields"
+
+import { revalidatePost } from "./hooks/revalidatePost"
+import { populateAuthors } from "./hooks/populateAuthors"
 import { authenticated } from "@/access/authenticated"
 import { authenticatedOrPublished } from "@/access/authenticatedOrPublished"
 
-export const Pages: CollectionConfig = {
-    slug: "pages",
+export const Posts: CollectionConfig = {
+    slug: "posts",
     access: {
         create: authenticated,
         delete: authenticated,
@@ -24,13 +23,10 @@ export const Pages: CollectionConfig = {
         update: authenticated,
     },
     labels: {
-        singular: {
-            en: "Page",
-            tr: "Sayfa",
-        },
+        singular: "Blog",
         plural: {
-            en: "Pages",
-            tr: "Sayfalar",
+            en: "Blogs",
+            tr: "Bloglar",
         },
     },
     admin: {
@@ -42,7 +38,7 @@ export const Pages: CollectionConfig = {
             name: "title",
             label: {
                 en: "Title",
-                tr: "Başlıks",
+                tr: "Başlık",
             },
             type: "text",
             required: true,
@@ -75,7 +71,6 @@ export const Pages: CollectionConfig = {
             type: "richText",
             localized: true,
         },
-        isHomePage,
         {
             name: "publishedAt",
             label: {
@@ -86,40 +81,12 @@ export const Pages: CollectionConfig = {
             admin: {
                 position: "sidebar",
                 date: {
-                    displayFormat: "dd.MM.yyyy",
+                    displayFormat: "dd.MM.YYYY",
                 },
             },
         },
         ...slugField(),
         ...mediaFields, // Media fields
-        {
-            name: "showInMenu",
-            label: {
-                en: "Show in Menu",
-                tr: "Menüde Göster",
-            },
-            type: "select",
-            defaultValue: "yes",
-            options: [
-                {
-                    label: {
-                        en: "Yes",
-                        tr: "Evet",
-                    },
-                    value: "yes",
-                },
-                {
-                    label: {
-                        en: "No",
-                        tr: "Hayır",
-                    },
-                    value: "no",
-                },
-            ],
-            admin: {
-                position: "sidebar",
-            },
-        },
         // SEO fields
         {
             name: "meta",
@@ -145,12 +112,49 @@ export const Pages: CollectionConfig = {
                 }),
             ],
         },
+        {
+            name: "authors",
+            label: {
+                tr: "Yazar",
+                en: "Author",
+            },
+            type: "relationship",
+            admin: {
+                position: "sidebar",
+            },
+            hasMany: true,
+            relationTo: "users",
+        },
+        {
+            name: "populatedAuthors",
+            label: {
+                tr: "Yazarlar",
+                en: "Authors",
+            },
+            type: "array",
+            access: {
+                update: () => false,
+            },
+            admin: {
+                disabled: true,
+                readOnly: true,
+            },
+            fields: [
+                {
+                    name: "id",
+                    type: "text",
+                },
+                {
+                    name: "name",
+                    type: "text",
+                },
+            ],
+        },
     ],
     hooks: {
-        afterChange: [revalidateHook], // Revalidate after changes
-        beforeChange: [populatePublishedAt],
+        afterChange: [revalidatePost],
+        afterRead: [populateAuthors],
     },
-    timestamps: true,
     versions: {
         drafts: {
             autosave: {
@@ -159,4 +163,5 @@ export const Pages: CollectionConfig = {
         },
         maxPerDoc: 50,
     },
+    timestamps: true,
 }

@@ -1,9 +1,10 @@
 import type { Metadata } from "next"
-
 import { NextIntlClientProvider } from "next-intl"
 import { getMessages } from "next-intl/server"
 
-import "../globals.css"
+import { mergeOpenGraph } from "@/utilities/mergeOpenGraph"
+
+import "./globals.css"
 
 export default async function LocaleLayout({
     children,
@@ -12,12 +13,14 @@ export default async function LocaleLayout({
     children: React.ReactNode
     params: { locale: string }
 }) {
-    // Providing all messages to the client
-    // side is the easiest way to get started
     const messages = await getMessages()
 
     return (
-        <html lang={locale}>
+        <html lang={locale} suppressHydrationWarning>
+            <head>
+                <link href="/favicon.ico" rel="icon" sizes="32x32" />
+                <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
+            </head>
             <body>
                 <NextIntlClientProvider messages={messages}>
                     {children}
@@ -31,6 +34,7 @@ export const metadata: Metadata = {
     metadataBase: new URL(
         process.env.NEXT_PUBLIC_SERVER_URL || "https://ardauyaroglu.com"
     ),
+    openGraph: mergeOpenGraph(),
     twitter: {
         card: "summary_large_image",
         creator: "@ardauyaroglu",

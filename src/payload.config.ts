@@ -15,30 +15,75 @@ import { en } from "@payloadcms/translations/languages/en"
 
 import { seoPlugin } from "@payloadcms/plugin-seo"
 import { GenerateTitle, GenerateURL } from "@payloadcms/plugin-seo/types"
-import { Page } from "src/payload-types"
+import { Page, Post } from "src/payload-types"
 
 import { Pages } from "./collections/Pages"
+import { Posts } from "./collections/Posts"
+import { Categories } from "./collections/Categories"
 import { Products } from "./collections/Products"
-import { Users } from "./collections/Users"
+import Users from "./collections/Users"
 import { Media } from "./collections/Media"
 import { i18n } from "./collections/i18n"
 import { revalidateRedirects } from "./hooks/revalidateRedirects"
+import { getPayloadHMR } from "@payloadcms/next/utilities"
+import configPromise from "@payload-config"
 
-const generateTitle: GenerateTitle<Page> = ({ doc }) => {
-    return doc?.title ? `${doc.title} | Arda Uyaroğlu` : "Arda Uyaroğlu"
+type DocumentType = Page | Post // Assuming Post is defined somewhere
+
+const generateTitle: GenerateTitle<DocumentType> = ({ doc }) => {
+    const siteName = process.env.NEXT_PUBLIC_SITE_NAME || ""
+    return doc?.title
+        ? `${doc.title} | ${siteName}`
+        : process.env.NEXT_PUBLIC_SITE_NAME || ""
 }
 
-const generateURL: GenerateURL<Page> = ({ doc, locale }) => {
-    const currentLang = locale // Belge üzerindeki mevcut dil (örneğin 'en', 'tr', 'de')
-    const defaultLang = process.env.NEXT_PUBLIC_DEFAULT_LANG || "tr" // Varsayılan dili .env'den alırız (örn: 'tr')
+const generateURL: GenerateURL<DocumentType> = async ({
+    doc,
+    locale,
+    collectionConfig,
+}: any) => {
+    const payload = await getPayloadHMR({ config: configPromise })
 
-    // Eğer dil Türkçe ise slug direk gelir, değilse dil kodunu ekleriz
+    const currentLang = locale
+    const defaultLang = process.env.NEXT_PUBLIC_DEFAULT_LANG
+
+    // Anasayfa olarak işaretlenmiş sayfaların slug'larını al
+    let homepagePages
+    try {
+        homepagePages = await payload.find({
+            collection: "pages",
+            where: {
+                homepage: { equals: "yes" },
+            },
+        })
+    } catch (error) {
+        throw new Error("Failed to fetch homepage slugs")
+    }
+
+    const homepageSlugs = homepagePages.docs.map((page) => page.slug)
+
+    let customSlug = ""
+    if (collectionConfig.slug === "posts") {
+        switch (locale) {
+            case "tr":
+                customSlug = "icerik/"
+                break
+            case "en":
+                customSlug = "blog/"
+                break
+        }
+    }
+
     const urlPrefix =
         currentLang && currentLang !== defaultLang ? `/${currentLang}` : ""
 
+    if (homepageSlugs.includes(doc?.slug)) {
+        return `${process.env.NEXT_PUBLIC_SERVER_URL!}${urlPrefix}`
+    }
+
     return doc?.slug
-        ? `${process.env.NEXT_PUBLIC_SERVER_URL!}${urlPrefix}/${doc.slug}`
-        : process.env.NEXT_PUBLIC_SERVER_URL!
+        ? `${process.env.NEXT_PUBLIC_SERVER_URL!}${urlPrefix}/${customSlug}${doc.slug}`
+        : `${process.env.NEXT_PUBLIC_SERVER_URL!}${urlPrefix}`
 }
 
 const filename = fileURLToPath(import.meta.url)
@@ -51,9 +96,8 @@ export default buildConfig({
             baseDir: path.resolve(dirname),
         },
         dateFormat: "dd.MM.yyyy",
-        avatar: "gravatar",
     },
-    collections: [Pages, Products, Users, Media, i18n],
+    collections: [Pages, Posts, Products, Categories, Users, Media, i18n],
     editor: lexicalEditor({
         features: ({ defaultFeatures }) => [
             ...defaultFeatures,
@@ -74,7 +118,7 @@ export default buildConfig({
             generateURL,
         }),
         redirectsPlugin({
-            collections: ["pages"],
+            collections: ["pages", "posts"],
             overrides: {
                 // @ts-expect-error
                 fields: ({ defaultFields }) => {

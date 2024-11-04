@@ -6,7 +6,7 @@ const withNextIntl = createNextIntlPlugin()
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    // Ortak Next.js yapılandırmalarınızı buraya ekleyebilirsiniz
+    // Ortak Next.js yapılandırmalarınızı buraya ekleyebilirsinizz
 }
 
 // Eklentileri zincirleyerek birleştiriyoruz
